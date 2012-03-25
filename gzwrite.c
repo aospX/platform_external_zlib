@@ -338,19 +338,19 @@ int ZEXPORTVA gzprintf (gzFile file, const char *format, ...)
     va_start(va, format);
 #ifdef NO_vsnprintf
 #  ifdef HAS_vsprintf_void
-    (void)vsprintf((char *)(state->in), format, va);
+    (void)vsprintf(state->in, format, va);
     va_end(va);
     for (len = 0; len < size; len++)
         if (state->in[len] == 0) break;
 #  else
-    len = vsprintf((char *)(state->in), format, va);
+    len = vsprintf(state->in, format, va);
     va_end(va);
 #  endif
 #else
 #  ifdef HAS_vsnprintf_void
-    (void)vsnprintf((char *)(state->in), size, format, va);
+    (void)vsnprintf(state->in, size, format, va);
     va_end(va);
-    len = strlen((char *)(state->in));
+    len = strlen(state->in);
 #  else
     len = vsnprintf((char *)(state->in), size, format, va);
     va_end(va);
@@ -416,23 +416,22 @@ int ZEXPORTVA gzprintf (file, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
     state->in[size - 1] = 0;
 #ifdef NO_snprintf
 #  ifdef HAS_sprintf_void
-    sprintf((char *)(state->in), format, a1, a2, a3, a4, a5, a6, a7, a8,
+    sprintf(state->in, format, a1, a2, a3, a4, a5, a6, a7, a8,
             a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
     for (len = 0; len < size; len++)
         if (state->in[len] == 0) break;
 #  else
-    len = sprintf((char *)(state->in), format, a1, a2, a3, a4, a5, a6, a7, a8,
-                  a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
+    len = sprintf(state->in, format, a1, a2, a3, a4, a5, a6, a7, a8,
+                a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
 #  endif
 #else
 #  ifdef HAS_snprintf_void
-    snprintf((char *)(state->in), size, format, a1, a2, a3, a4, a5, a6, a7, a8,
+    snprintf(state->in, size, format, a1, a2, a3, a4, a5, a6, a7, a8,
              a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
-    len = strlen((char *)(state->in));
+    len = strlen(state->in);
 #  else
-    len = snprintf((char *)(state->in), size, format, a1, a2, a3, a4, a5, a6,
-                   a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18,
-                   a19, a20);
+    len = snprintf(state->in, size, format, a1, a2, a3, a4, a5, a6, a7, a8,
+                 a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
 #  endif
 #endif
 
