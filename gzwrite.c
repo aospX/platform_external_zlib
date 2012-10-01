@@ -270,14 +270,16 @@ int ZEXPORT gzputc(file, c)
 
     /* try writing to input buffer for speed (state->size == 0 if buffer not
        initialized) */
-    if (strm->avail_in == 0)
-        strm->next_in = state->in;
-    have = strm->next_in + strm->avail_in - state->in;
-    if (have < state->size) {
-        state->in[have] = c;
-        strm->avail_in++;
-        state->x.pos++;
-        return c & 0xff;
+    if (state->size) {
+        if (strm->avail_in == 0)
+            strm->next_in = state->in;
+        have = strm->next_in + strm->avail_in - state->in;
+        if (have < state->size) {
+            state->in[have] = c;
+            strm->avail_in++;
+            state->x.pos++;
+            return c & 0xff;
+        }
     }
 
     /* no room in buffer or not initialized, use gz_write() */
@@ -551,15 +553,14 @@ int ZEXPORT gzclose_w(file)
     }
 
     /* flush, free memory, and close file */
-    if (state->size) {
-        if (gz_comp(state, Z_FINISH) == -1)
-            ret = state->err;
-        if (!state->direct) {
-            (void)deflateEnd(&(state->strm));
-            free(state->out);
-        }
-        free(state->in);
+    if (gz_comp(state, Z_FINISH) == -1)
+        ret = state->err;
+    if (!state->direct) {
+        (void)deflateEnd(&(state->strm));
+        free(state->out);
     }
+    if (state->size)
+        free(state->in);
     gz_error(state, Z_OK, NULL);
     free(state->path);
     if (close(state->fd) == -1)
